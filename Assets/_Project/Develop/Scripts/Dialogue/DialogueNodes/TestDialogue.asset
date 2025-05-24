@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc3f9ede2d3455f4a8c0f4174942667b, type: 3}
+  m_Name: TestDialogue
+  m_EditorClassIdentifier: 
+  nodes:
+  - GUID: 1
+    nodeType: 0
+    speakerName: Maxim
+    speakerSide: 0
+    text: "\u041C\u0430\u043B\u044B\u0448, \u044F \u043B\u044E\u0431\u043B\u044E
+      \u0442\u0435\u0431\u044F!"
+    textAlignment: 257
+    textPrintSound: {fileID: 0}
+    autoChangeDialogue: 0
+    autoChangeDelay: 2
+    revealMode: 1
+    revealSpeed: 0.04
+    sceneEventKeysOnStart:
+    - Key: DisableRightCharacter
+      DelayBeforeEvent: 5
+      DelayAfterEvent: 5
+    - Key: DisableLeftCharacter
+      DelayBeforeEvent: 5
+      DelayAfterEvent: 5
+    sceneEventKeysOnEnd:
+    - Key: ClearSpeakerNames
+      DelayBeforeEvent: 0
+      DelayAfterEvent: 0
+    choices:
+    - text: 
+      onSelected:
+        m_PersistentCalls:
+          m_Calls: []
+      nextNodeGuid: 
+    nextNodeGuid: 2
+  - GUID: 2
+    nodeType: 0
+    speakerName: Milana
+    speakerSide: 1
+    text: "\u041C\u042F\u0423"
+    textAlignment: 516
+    textPrintSound: {fileID: 0}
+    autoChangeDialogue: 1
+    autoChangeDelay: 0
+    revealMode: 1
+    revealSpeed: 0.4
+    sceneEventKeysOnStart: []
+    sceneEventKeysOnEnd: []
+    choices:
+    - text: 
+      onSelected:
+        m_PersistentCalls:
+          m_Calls: []
+      nextNodeGuid: 
+    nextNodeGuid: 3
