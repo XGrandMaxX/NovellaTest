@@ -1,23 +1,31 @@
 using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEditor;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
+[RequireComponent(typeof(DialogueView), typeof(DialogueSceneEvents))]
 public class DialogueRunner : MonoBehaviour
 {
-    [SerializeField] private DialogueView _view;
+    private DialogueView _view;
 
-    [SerializeField] private DialogueSceneEvents _sceneEvents;
+    private DialogueSceneEvents _sceneEvents;
 
     [field: Tooltip("Set the initial dialogue to play when the scene starts")]
     [field: SerializeField] public DialogueSO CurrentDialogue { get; private set; }
 
     private Dictionary<string, DialogueNode> _nodeMap;
-
-    private async void Start()
+    private void Awake()
+    {
+        _view = GetComponent<DialogueView>();
+        _sceneEvents = GetComponent<DialogueSceneEvents>();
+    }
+    private void Start()
     {
         if (CurrentDialogue != null)
-            await PlayDialogueAsync(CurrentDialogue);
+            PlayDialogueAsync(CurrentDialogue).Forget();
     }
 
     public async UniTask PlayDialogueAsync(DialogueSO dialogue)
@@ -38,40 +46,49 @@ public class DialogueRunner : MonoBehaviour
 
         var ct = this.GetCancellationTokenOnDestroy();
 
-        InvokeSceneEvents(node.sceneEventKeysOnStart);
+        await UniTask.Delay(TimeSpan.FromSeconds(node.DialogueStartDelay), cancellationToken: ct);
+
+        AddQuests(node);
+        InvokeSceneEvents(node.SceneEventKeysOnStart).Forget();
 
         await UniTask.DelayFrame(3, PlayerLoopTiming.Update, cancellationToken: ct);
+        
+        var speakerName = (string.IsNullOrWhiteSpace(node.SpeakerName) || node.SpeakerName == "User") ? UserData.UserName : node.SpeakerName;
+        SetSpeaker(node.SpeakerSide, speakerName);
 
-        SetSpeaker(node.speakerSide, node.speakerName);
+        TryToCompleteDialogueQuest(node);
 
-
-        switch (node.nodeType)
+        switch (node.NodeType)
         {
             case DialogueNodeType.Text:
-                await _view.ShowTextAsync(node.text, node.speakerName, node.textPrintSound, node.revealMode, node.revealSpeed, node.textAlignment);
 
-                if (node.autoChangeDialogue)
-                    await UniTask.Delay(TimeSpan.FromSeconds(node.autoChangeDelay), cancellationToken: ct);
+                await _view.ShowTextAsync(node.Text, node.SpeakerName, node.TextPrintSound, node.revealMode, node.revealSpeed, node.TextAlignment);
+
+                if (node.AutoChangeDialogue)
+                    await UniTask.Delay(TimeSpan.FromSeconds(node.AutoChangeDelay), cancellationToken: ct);
                 else
-                    await UniTask.WaitUntil(() => Input.GetKeyDown(KeyCode.Space), cancellationToken: ct); //или кнопка
+                    await _view.WaitForContinue(ct);
 
-                InvokeSceneEvents(node.sceneEventKeysOnEnd);
+                InvokeSceneEvents(node.SceneEventKeysOnEnd).Forget();
+                G.QuestManager.RefreshQuestLogUI();
 
-                if (!string.IsNullOrEmpty(node.nextNodeGuid))
-                    await PlayNodeAsync(node.nextNodeGuid);
+                if (!string.IsNullOrEmpty(node.NextNodeGuid))
+                    await PlayNodeAsync(node.NextNodeGuid);
 
                 break;
             //WIP
             case DialogueNodeType.Choice:
-                var chosenGuid = await _view.ShowChoicesAsync(node.choices);
-                InvokeSceneEvents(node.sceneEventKeysOnEnd);
+                var chosenGuid = await _view.ShowChoicesAsync(node.Choices);
+
+                InvokeSceneEvents(node.SceneEventKeysOnEnd).Forget();
+                G.QuestManager.RefreshQuestLogUI();
 
                 await PlayNodeAsync(chosenGuid);
                 break;
         }
     }
 
-    private async void InvokeSceneEvents(List<EventState> events)
+    private async UniTaskVoid InvokeSceneEvents(List<EventState> events)
     {
         if (_sceneEvents == null) return;
         var ct = this.GetCancellationTokenOnDestroy();
@@ -88,6 +105,27 @@ public class DialogueRunner : MonoBehaviour
             await UniTask.Delay(TimeSpan.FromSeconds(@event.DelayAfterEvent), cancellationToken: ct);
         }
     }
+    private void AddQuests(DialogueNode node)
+    {
+        foreach (var quest in node.Quests)
+        {
+            G.QuestManager.AddQuest(quest);
+        }
+    }
+    private void TryToCompleteDialogueQuest(DialogueNode node)
+    {
+        string npcName = node.SpeakerName;
 
+        G.QuestManager.OnNPCTalked(npcName);
+    }
+
+    #region Dialogue Control
     private void SetSpeaker(SpeakerSide side, string name) => _view.SetSpeaker(side, name);
+    public void SetDialogue(DialogueSO newDialogue) => CurrentDialogue = newDialogue;
+    public void SetAndPlayDialogue(DialogueSO newDialogue)
+    {
+        SetDialogue(newDialogue);
+        PlayDialogueAsync(newDialogue).Forget();
+    }
+    #endregion
 }

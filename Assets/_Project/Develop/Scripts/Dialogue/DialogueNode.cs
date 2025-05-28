@@ -20,35 +20,41 @@ public enum DialogueTextAlignment
 public class DialogueNode
 {
     public string GUID;
-    public DialogueNodeType nodeType;
+    public DialogueNodeType NodeType;
 
     [Header("Speaker Settings")]
-    public string speakerName;
-    public SpeakerSide speakerSide;
+    [InfoBox("Если спикер не установлен или установлено имя User, будет использован UserName, который установил игрок")]
+    public string SpeakerName;
+    public SpeakerSide SpeakerSide;
 
+    [Header("Dialogue Settings")]
     [Space(20)]
-    [ResizableTextArea, AllowNesting, Label("Text (Press Enter)")]public string text;
-    public DialogueTextAlignment textAlignment;
-    public AudioClip textPrintSound;
-    [Space(20)]
+    [MinValue(0), AllowNesting] public float DialogueStartDelay;
+    [ResizableTextArea, AllowNesting, Label("Text (Press Enter)"), InfoBox("Используйте {User}, чтобы добавить имя пользователя в диалог")] 
+    public string Text;
+    public DialogueTextAlignment TextAlignment;
+    public AudioClip TextPrintSound;
 
     [Header("Auto Change Settings")]
-    public bool autoChangeDialogue;
-    [ShowIf(nameof(autoChangeDialogue)), MinValue(0), AllowNesting]public float autoChangeDelay;
+    public bool AutoChangeDialogue;
+    [ShowIf(nameof(AutoChangeDialogue)), MinValue(0), AllowNesting] public float AutoChangeDelay;
+
+    [Space(20)]
 
     [Header("Reveal Settings")]
     public TextRevealMode revealMode = TextRevealMode.ByLetters;
     [ShowIf(nameof(ShouldUseRevealSpeed)), MinValue(0.01f), AllowNesting]public float revealSpeed = 0.05f;
 
     [Header("Events")]
-    public List<EventState> sceneEventKeysOnStart;
-    public List<EventState> sceneEventKeysOnEnd;
+    public List<EventState> SceneEventKeysOnStart;
+    public List<EventState> SceneEventKeysOnEnd;
 
-    public List<DialogueChoice> choices;
+    public List<DialogueChoice> Choices;
+    [InfoBox("Квесты, которые выдаются при запуске диалога")]
+    public List<QuestSO> Quests;
 
     [Header("NextNode GUID")]
-    public string nextNodeGuid;
-
+    public string NextNodeGuid;
     private bool ShouldUseRevealSpeed() => revealMode == TextRevealMode.ByLetters || revealMode == TextRevealMode.ByWords;
 }
 

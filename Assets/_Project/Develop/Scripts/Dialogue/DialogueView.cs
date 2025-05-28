@@ -3,8 +3,10 @@ using NaughtyAttributes;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 [Serializable]
 public class DialogueCharacter
@@ -23,6 +25,12 @@ public class DialogueView : MonoBehaviour, IDialogueView
 
     private Dictionary<SpeakerSide, DialogueCharacter> characters;
     [SerializeField] private TextMeshProUGUI dialogueText;
+
+    [Space(20)]
+    [Header("Dialogue Continue method")]
+    [InfoBox("Нажатие на кнопку или клавишу продолжит диалог. Если один из методов не задан, будет использоваться другой.")]
+    [SerializeField] private Button ContinueButton;
+    [SerializeField] private KeyCode ContinueKey = KeyCode.Space;
 
     [Header("Audio settings")]
     [SerializeField] private AudioSource audioSource;
@@ -79,9 +87,11 @@ public class DialogueView : MonoBehaviour, IDialogueView
         ClearDialogueText();
 
         if (voiceClip != null)
-            audioSource.PlayOneShot(voiceClip);
+            audioSource.PlayOneShot(voiceClip); 
 
         ApplyAlignment(alignment);
+
+        text = text.Replace("{User}", UserData.UserName);
 
         switch (revealMode)
         {
@@ -97,7 +107,7 @@ public class DialogueView : MonoBehaviour, IDialogueView
                     dialogueText.text += c;
 
                     if (!char.IsWhiteSpace(c) && letterSfx != null)
-                        audioSource.PlayOneShot(letterSfx, 0.5f);
+                        audioSource.PlayOneShot(letterSfx); //Возможно вернуть громкость
 
                     await UniTask.Delay(TimeSpan.FromSeconds(speed), cancellationToken: ct);
                 }
@@ -112,7 +122,7 @@ public class DialogueView : MonoBehaviour, IDialogueView
                     dialogueText.text += word + " ";
 
                     if (wordSfx != null)
-                        audioSource.PlayOneShot(wordSfx, 0.5f);
+                        audioSource.PlayOneShot(wordSfx);//Возможно вернуть громкость
 
                     await UniTask.Delay(TimeSpan.FromSeconds(speed), cancellationToken: ct);
                 }
@@ -150,5 +160,45 @@ public class DialogueView : MonoBehaviour, IDialogueView
 
         return await tcs.Task;
     }
+
+    public async UniTask WaitForContinue(CancellationToken ct)
+    {
+        var tcs = new UniTaskCompletionSource();
+
+        void TryComplete()
+        {
+            if (!tcs.Task.Status.IsCompleted())
+                tcs.TrySetResult();
+        }
+
+        if (ContinueButton != null)
+        {
+            void OnClick()
+            {
+                ContinueButton.onClick.RemoveListener(OnClick);
+                TryComplete();
+            }
+
+            ContinueButton.onClick.AddListener(OnClick);
+
+            ct.Register(() => ContinueButton.onClick.RemoveListener(OnClick));
+        }
+
+        while (!tcs.Task.Status.IsCompleted())
+        {
+            if (ContinueKey != KeyCode.None && Input.GetKeyDown(ContinueKey))
+            {
+                TryComplete();
+                break;
+            }
+
+            await UniTask.Yield(PlayerLoopTiming.Update, ct);
+        }
+
+        await tcs.Task;
+    }
+
+
+
     #endregion
 }

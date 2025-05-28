@@ -14,52 +14,67 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodes:
   - GUID: 1
-    nodeType: 0
-    speakerName: Maxim
-    speakerSide: 0
-    text: "\u041C\u0430\u043B\u044B\u0448, \u044F \u043B\u044E\u0431\u043B\u044E
-      \u0442\u0435\u0431\u044F!"
-    textAlignment: 257
-    textPrintSound: {fileID: 0}
-    autoChangeDialogue: 0
-    autoChangeDelay: 2
+    NodeType: 0
+    SpeakerName: User
+    SpeakerSide: 0
+    DialogueStartDelay: 1
+    Text: "\u0412\u043E\u0437\u044C\u043C\u0438\u0442\u0435 \u043D\u0430 \u0440\u0430\u0431\u043E\u0442\u0443,
+      \u044F \u0443\u043C\u0438\u0440\u0430\u044E!!!"
+    TextAlignment: 257
+    TextPrintSound: {fileID: 0}
+    AutoChangeDialogue: 0
+    AutoChangeDelay: 0
     revealMode: 1
-    revealSpeed: 0.04
-    sceneEventKeysOnStart:
-    - Key: DisableRightCharacter
-      DelayBeforeEvent: 5
-      DelayAfterEvent: 5
-    - Key: DisableLeftCharacter
-      DelayBeforeEvent: 5
-      DelayAfterEvent: 5
-    sceneEventKeysOnEnd:
+    revealSpeed: 0.05
+    SceneEventKeysOnStart:
     - Key: ClearSpeakerNames
       DelayBeforeEvent: 0
       DelayAfterEvent: 0
-    choices:
-    - text: 
-      onSelected:
-        m_PersistentCalls:
-          m_Calls: []
-      nextNodeGuid: 
-    nextNodeGuid: 2
+    - Key: OpenQuestPanel
+      DelayBeforeEvent: 2
+      DelayAfterEvent: 0
+    SceneEventKeysOnEnd: []
+    Choices: []
+    Quests:
+    - {fileID: 11400000, guid: 949c10a2dc9faf7488335a4817ec393a, type: 2}
+    NextNodeGuid: 2
   - GUID: 2
-    nodeType: 0
-    speakerName: Milana
-    speakerSide: 1
-    text: "\u041C\u042F\u0423"
-    textAlignment: 516
-    textPrintSound: {fileID: 0}
-    autoChangeDialogue: 1
-    autoChangeDelay: 0
+    NodeType: 0
+    SpeakerName: HR
+    SpeakerSide: 1
+    DialogueStartDelay: 0
+    Text: "\u041E\u043A\u0435 {User}, \u0432\u044B \u043F\u0440\u0438\u043D\u044F\u0442\u044B"
+    TextAlignment: 257
+    TextPrintSound: {fileID: 0}
+    AutoChangeDialogue: 0
+    AutoChangeDelay: 0
     revealMode: 1
-    revealSpeed: 0.4
-    sceneEventKeysOnStart: []
-    sceneEventKeysOnEnd: []
-    choices:
-    - text: 
-      onSelected:
-        m_PersistentCalls:
-          m_Calls: []
-      nextNodeGuid: 
-    nextNodeGuid: 3
+    revealSpeed: 0.06
+    SceneEventKeysOnStart:
+    - Key: ClearSpeakerNames
+      DelayBeforeEvent: 0
+      DelayAfterEvent: 0
+    SceneEventKeysOnEnd: []
+    Choices: []
+    Quests: []
+    NextNodeGuid: 3
+  - GUID: 3
+    NodeType: 0
+    SpeakerName: User
+    SpeakerSide: 0
+    DialogueStartDelay: 0
+    Text: "\u0423\u0440\u0430\u0430, \u0441\u043F\u0430\u0441\u0438\u0431\u043E!"
+    TextAlignment: 257
+    TextPrintSound: {fileID: 0}
+    AutoChangeDialogue: 0
+    AutoChangeDelay: 0
+    revealMode: 1
+    revealSpeed: 0.06
+    SceneEventKeysOnStart:
+    - Key: ClearSpeakerNames
+      DelayBeforeEvent: 0
+      DelayAfterEvent: 0
+    SceneEventKeysOnEnd: []
+    Choices: []
+    Quests: []
+    NextNodeGuid: 
