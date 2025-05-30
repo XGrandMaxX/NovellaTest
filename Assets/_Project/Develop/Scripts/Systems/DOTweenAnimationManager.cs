@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public static class DOTweenAnimationManager
 {
     private static readonly Dictionary<Transform, Tween> _activeTweens = new();
+
     public static void DotAnimation(Text targetText, string message, float interval = 0.3f)
     {
         if (targetText == null) return;
@@ -25,6 +26,7 @@ public static class DOTweenAnimationManager
 
         _activeTweens[targetText.transform] = tween;
     }
+
     public static async UniTask AnimateShowAsync(Transform target, float duration = 0.5f, float delay = 0f, Ease ease = Ease.OutBack)
     {
         if (target == null) return;
@@ -77,4 +79,27 @@ public static class DOTweenAnimationManager
             _activeTweens.Remove(target);
         }
     }
+    public static async UniTask FadeImageAsync(Image image, float targetAlpha, float duration = 0.5f, Ease ease = Ease.Linear)
+    {
+        if (image == null) return;
+
+        StopTweenIfExists(image.transform);
+        image.gameObject.SetActive(true);
+
+        var tcs = new TaskCompletionSource<bool>();
+
+        var tween = image.DOFade(targetAlpha, duration)
+                         .SetEase(ease)
+                         .OnComplete(() => tcs.TrySetResult(true))
+                         .OnKill(() => _activeTweens.Remove(image.transform));
+
+        _activeTweens[image.transform] = tween;
+
+        await tcs.Task;
+    }
+    public static async UniTask FadeOutScreenAsync(Image screenFadeImage, float duration = 0.5f, Ease ease = Ease.Linear) 
+        => await FadeImageAsync(screenFadeImage, 1f, duration, ease);
+
+    public static async UniTask FadeInScreenAsync(Image screenFadeImage, float duration = 0.5f, Ease ease = Ease.Linear) 
+        => await FadeImageAsync(screenFadeImage, 0f, duration, ease);
 }

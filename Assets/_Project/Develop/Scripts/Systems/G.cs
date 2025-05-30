@@ -9,4 +9,8 @@ public static class G
     /// Использовать только на игровой сцене, в противном случае объекта не будет
     /// </summary>
     public static QuestManager QuestManager;
+
+    public static SceneTransitionManager SceneTransitionManager;
+
+    public static PauseManager PauseManager;
 }

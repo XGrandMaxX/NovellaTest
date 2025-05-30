@@ -17,7 +17,7 @@ public class DialogueCharacter
 
 public enum SpeakerSide { Left, Right }
 
-public class DialogueView : MonoBehaviour, IDialogueView
+public class DialogueView : MonoBehaviour, IDialogueView, IPauseable
 {
     [field: SerializeField, ReadOnly] public DialogueCharacter CurrentSpeaker { get; private set; }
     [SerializeField] private DialogueCharacter leftCharacter;
@@ -42,7 +42,7 @@ public class DialogueView : MonoBehaviour, IDialogueView
     [SerializeField] private GameObject choiceButtonPrefab;
 
     private CancellationTokenSource revealCts;
-
+    private bool isPaused;
 
     private void Awake()
     {
@@ -51,6 +51,20 @@ public class DialogueView : MonoBehaviour, IDialogueView
             { SpeakerSide.Left, leftCharacter },
             { SpeakerSide.Right, rightCharacter }
         };
+    }
+    private void Start()
+    {
+        if (G.PauseManager == null)
+            return;
+
+        G.PauseManager.Register(this);
+    }
+    private void OnDestroy()
+    {
+        if (G.PauseManager == null)
+            return;
+
+        G.PauseManager.Unregister(this);
     }
 
     #region Dialogue
@@ -104,6 +118,8 @@ public class DialogueView : MonoBehaviour, IDialogueView
                 {
                     if (ct.IsCancellationRequested) break;
 
+                    await WaitWhilePaused();
+
                     dialogueText.text += c;
 
                     if (!char.IsWhiteSpace(c) && letterSfx != null)
@@ -118,6 +134,8 @@ public class DialogueView : MonoBehaviour, IDialogueView
                 foreach (var word in words)
                 {
                     if (ct.IsCancellationRequested) break;
+
+                    await WaitWhilePaused();
 
                     dialogueText.text += word + " ";
 
@@ -198,7 +216,13 @@ public class DialogueView : MonoBehaviour, IDialogueView
         await tcs.Task;
     }
 
+    #endregion
 
 
+    #region IPauseable
+    private async UniTask WaitWhilePaused() => await UniTask.WaitUntil(() => !isPaused, PlayerLoopTiming.Update, this.GetCancellationTokenOnDestroy());
+    public void OnPause() => isPaused = true;
+
+    public void OnResume() => isPaused = false;
     #endregion
 }

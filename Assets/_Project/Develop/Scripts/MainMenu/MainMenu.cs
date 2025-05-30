@@ -51,12 +51,14 @@ public class MainMenu : MonoBehaviour
 
     public void StartGame()
     {
+        StartNameText.gameObject.SetActive(false);
+
         foreach (var entry in menuButtons)
         {
             entry.Button.gameObject.SetActive(false);
         }
 
-        SceneManager.LoadSceneAsync(LoadedScene);
+        G.SceneTransitionManager.LoadSceneWithFade(LoadedScene);
     }
 }
 
