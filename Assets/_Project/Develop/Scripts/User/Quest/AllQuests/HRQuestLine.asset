@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc208d19830934848bc9c00b06a33737, type: 3}
+  m_Name: HRQuestLine
+  m_EditorClassIdentifier: 
+  QuestID: 1
+  QuestTitle: HR quest line
+  Description: 
+  Objectives:
+  - rid: 1602713661436592131
+  - rid: 1602713661436592138
+  Rewards:
+  - RewardID: Heart
+    Value: 5
+    RewardIcon: {fileID: 21300000, guid: 4060e19af1aa07f4188c9af70b1a734b, type: 3}
+  - RewardID: Diamond
+    Value: 9
+    RewardIcon: {fileID: 21300000, guid: 0d69c759c568bef42bd11f2b7d0b18da, type: 3}
+  - RewardID: LuckyBox
+    Value: 1
+    RewardIcon: {fileID: 21300000, guid: 6595867ddf095db4f92ac7e9044c8457, type: 3}
+  Accepted: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 1602713661436592131
+      type: {class: TalkToNPCObjective, ns: , asm: Assembly-CSharp}
+      data:
+        <Description>k__BackingField: Talk to HR
+        completedPreview: 0
+        NpcID: HR
+    - rid: 1602713661436592138
+      type: {class: TalkToNPCObjective, ns: , asm: Assembly-CSharp}
+      data:
+        <Description>k__BackingField: Talk to TeamLead
+        completedPreview: 0
+        NpcID: TeamLead
