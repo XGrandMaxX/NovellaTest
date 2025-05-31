@@ -14,6 +14,7 @@ public class DialogueRunner : MonoBehaviour, IPauseable
     [field: SerializeField] public DialogueSO CurrentDialogue { get; private set; }
 
     private Dictionary<string, DialogueNode> _nodeMap;
+    [SerializeField] private DialogueSO ItemDialogue;
 
     [SerializeField] private bool isPaused;
     private void Awake()
@@ -23,6 +24,9 @@ public class DialogueRunner : MonoBehaviour, IPauseable
     }
     private void Start()
     {
+        if (UserData.HasQuestItem && ItemDialogue != null)
+            SetDialogue(ItemDialogue);
+
         if (CurrentDialogue != null)
             PlayDialogueAsync(CurrentDialogue).Forget();
 

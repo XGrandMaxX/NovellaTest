@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cc208d19830934848bc9c00b06a33737, type: 3}
-  m_Name: TestQuest
+  m_Name: HRQuestLine
   m_EditorClassIdentifier: 
   QuestID: 1
-  QuestTitle: Test Title
+  QuestTitle: HR quest line
   Description: 
   Objectives:
   - rid: 1602713661436592131
@@ -36,7 +36,7 @@ MonoBehaviour:
       type: {class: TalkToNPCObjective, ns: , asm: Assembly-CSharp}
       data:
         <Description>k__BackingField: Talk to HR
-        completedPreview: 1
+        completedPreview: 0
         NpcID: HR
     - rid: 1602713661436592138
       type: {class: TalkToNPCObjective, ns: , asm: Assembly-CSharp}

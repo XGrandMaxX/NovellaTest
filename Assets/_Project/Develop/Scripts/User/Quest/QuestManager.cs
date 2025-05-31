@@ -16,11 +16,13 @@ public class QuestManager : MonoBehaviour
         if (G.QuestManager != null)
             Destroy(gameObject);
         else
+        {
             G.QuestManager = this;
+            DontDestroyOnLoad(gameObject);
+        }
 
-        questLog = GetComponent<QuestLog>();
+        questLog = GetComponentInChildren<QuestLog>(true);
         questLog.OnQuestCreated += SubscribeQuestButtons;
-        gameObject.SetActive(false);
     }
     private void OnDestroy()
     {

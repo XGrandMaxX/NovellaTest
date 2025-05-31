@@ -16,11 +16,18 @@ public class SceneTransitionManager : MonoBehaviour
     private void Awake()
     {
         if (G.SceneTransitionManager != null)
+        {
             Destroy(gameObject);
+            return;
+        }
         else
         {
             G.SceneTransitionManager = this;
             DontDestroyOnLoad(gameObject);
+
+
+            PlayerPrefs.DeleteKey("completedObjectives");
+            PlayerPrefs.Save();
         }
     }
 

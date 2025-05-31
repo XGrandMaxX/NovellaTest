@@ -13,4 +13,7 @@ public static class UserData
     }
     public static bool HasUser => PlayerPrefs.HasKey("UserName") && 
                                   !string.IsNullOrWhiteSpace(PlayerPrefs.GetString("UserName"));
+
+
+    public static bool HasQuestItem = false;
 }

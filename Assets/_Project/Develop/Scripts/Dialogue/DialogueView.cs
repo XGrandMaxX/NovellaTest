@@ -39,7 +39,7 @@ public class DialogueView : MonoBehaviour, IDialogueView, IPauseable
 
     [Header("Choices")]
     [SerializeField] private GameObject choiceContainer;
-    [SerializeField] private GameObject choiceButtonPrefab;
+    [SerializeField] private ChooseButton choiceButtonPrefab;
 
     private CancellationTokenSource revealCts;
     private bool isPaused;
@@ -101,7 +101,7 @@ public class DialogueView : MonoBehaviour, IDialogueView, IPauseable
         ClearDialogueText();
 
         if (voiceClip != null)
-            audioSource.PlayOneShot(voiceClip); 
+            audioSource.PlayOneShot(voiceClip);
 
         ApplyAlignment(alignment);
 
@@ -123,7 +123,11 @@ public class DialogueView : MonoBehaviour, IDialogueView, IPauseable
                     dialogueText.text += c;
 
                     if (!char.IsWhiteSpace(c) && letterSfx != null)
-                        audioSource.PlayOneShot(letterSfx); //Возможно вернуть громкость
+                    {
+                        var randomPitch = UnityEngine.Random.Range(0.95f, 1.05f);
+                        audioSource.pitch = randomPitch;
+                        audioSource.PlayOneShot(letterSfx);
+                    }    
 
                     await UniTask.Delay(TimeSpan.FromSeconds(speed), cancellationToken: ct);
                 }
@@ -140,7 +144,11 @@ public class DialogueView : MonoBehaviour, IDialogueView, IPauseable
                     dialogueText.text += word + " ";
 
                     if (wordSfx != null)
-                        audioSource.PlayOneShot(wordSfx);//Возможно вернуть громкость
+                    {
+                        var randomPitch = UnityEngine.Random.Range(0.95f, 1.05f);
+                        audioSource.pitch = randomPitch;
+                        audioSource.PlayOneShot(wordSfx);
+                    }
 
                     await UniTask.Delay(TimeSpan.FromSeconds(speed), cancellationToken: ct);
                 }
@@ -165,11 +173,11 @@ public class DialogueView : MonoBehaviour, IDialogueView, IPauseable
         foreach (var choice in choices)
         {
             var buttonObj = Instantiate(choiceButtonPrefab, choiceContainer.transform);
-            var buttonText = buttonObj.GetComponentInChildren<TextMeshProUGUI>();
-            buttonText.text = choice.text;
+            buttonObj.Text.text = choice.text;
 
             var capturedChoice = choice;
-            buttonObj.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() =>
+            buttonObj.Button.onClick.RemoveAllListeners();
+            buttonObj.Button.onClick.AddListener(() =>
             {
                 tcs.TrySetResult(capturedChoice.nextNodeGuid);
                 choiceContainer.SetActive(false);

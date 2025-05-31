@@ -14,20 +14,27 @@ public class QuestLog : MonoBehaviour
     [SerializeField] private Text completedObjectivesCountText;
 
     public event Action<QuestUI, QuestSO> OnQuestCreated;
-
+    private void Awake() => gameObject.SetActive(false);
     private void OnEnable() => RefreshUI();
     public void UpdateCompletedObjectivesUI(List<QuestSO> quests)
     {
-        int completedObjectives = 0;
+        int savedCompletedObjectives = PlayerPrefs.GetInt("completedObjectives", 0);
+        completedObjectivesCountText.text = $"Completed objectives: {savedCompletedObjectives}";
 
+        int actualCompletedObjectives = 0;
         foreach (var quest in quests)
         {
-            completedObjectives += quest.Objectives.Count(obj => obj.IsCompleted);
+            actualCompletedObjectives += quest.Objectives.Count(obj => obj.IsCompleted);
         }
 
-        completedObjectivesCountText.text = $"Completed objectives: {completedObjectives}";
-    }
+        if (actualCompletedObjectives != savedCompletedObjectives && actualCompletedObjectives > 0)
+        {
+            PlayerPrefs.SetInt("completedObjectives", actualCompletedObjectives);
+            PlayerPrefs.Save();
 
+            completedObjectivesCountText.text = $"Completed objectives: {actualCompletedObjectives}";
+        }
+    }
 
     public void RefreshUI(bool withAnimation = true)
     {
@@ -49,14 +56,20 @@ public class QuestLog : MonoBehaviour
             var questId = quests.IndexOf(quest);
             entry.TitleText.text = $"{questId+1}.{quest.QuestTitle}";
 
-            var objective = quest.Objectives.FirstOrDefault(obj => !obj.IsCompleted && !string.IsNullOrWhiteSpace(obj.Description));
-            entry.DescriptionText.text = objective.Description;
-
+            
             bool isCompleted = quest.IsCompleted;
             bool accepted = quest.Accepted;
 
             entry.ClaimButton.gameObject.SetActive(accepted);
             entry.AcceptButton.gameObject.SetActive(!accepted && !isCompleted);
+
+            var objective = quest.Objectives.FirstOrDefault(obj => obj != null && !obj.IsCompleted && !string.IsNullOrWhiteSpace(obj.Description));
+            if (objective != null)
+                entry.DescriptionText.text = objective.Description;
+            else if (objective == null && isCompleted)
+                entry.DescriptionText.text = "Completed! Claim your reward";
+            else
+                entry.DescriptionText.text = quest.Description;
 
             if (accepted && !isCompleted)
             {

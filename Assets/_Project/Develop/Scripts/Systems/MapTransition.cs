@@ -25,6 +25,10 @@ public class MapTransition : MonoBehaviour
 
     [SerializeField] private Button startMapButton;
     [SerializeField, ReadOnly] private Map selectedMap;
+
+    [SerializeField] private Button leftButton;
+    [SerializeField] private Button rightButton;
+
     private int currentMapIndex = 0;
     private Vector3[] originalPositions;
     private bool isTransitioning = false;
@@ -35,7 +39,15 @@ public class MapTransition : MonoBehaviour
     private void OnEnable()
     {
         transitionDuration = baseTransitionSpeed;
-        startMapButton.gameObject.SetActive(true);
+
+        if(startMapButton != null ) 
+            startMapButton.gameObject.SetActive(true);
+
+        if(leftButton != null )
+            leftButton.gameObject.SetActive(true);
+
+        if(rightButton != null )
+            rightButton.gameObject.SetActive(true);
 
         foreach (var map in maps)
         {
@@ -59,6 +71,8 @@ public class MapTransition : MonoBehaviour
         originalPositions = new Vector3[maps.Length];
         baseTransitionSpeed = transitionDuration;
 
+        SubscribeSideButtons();
+
         for (int i = 0; i < maps.Length; i++)
         {
             maps[i].Init();
@@ -69,7 +83,15 @@ public class MapTransition : MonoBehaviour
         }
 
         baseCenterPosition = maps[0].Transform.localPosition;
+    }
 
+    private void SubscribeSideButtons()
+    {
+        leftButton.onClick.RemoveAllListeners();
+        rightButton.onClick.RemoveAllListeners();
+
+        leftButton.onClick.AddListener(MoveLeft);
+        rightButton.onClick.AddListener(MoveRight);
     }
 
     private async void SetupInitialState() => await UpdateMapPositionsAsync(currentMapIndex);
@@ -130,13 +152,19 @@ public class MapTransition : MonoBehaviour
 
         gameObject.SetActive(true);
 
+        if(startMapButton != null) 
+            startMapButton.gameObject.SetActive(false);
+
+        if(leftButton != null)
+            leftButton.gameObject.SetActive(false);
+
+        if(rightButton != null)
+            rightButton.gameObject.SetActive(false);
+
         foreach (var map in maps)
         {
             map.Button.interactable = false;
-            //Боковые кнопки тоже
         }
-
-        startMapButton.gameObject.SetActive(false);
 
         SetTransitionSpeed(newTransitionSpeed);
 
@@ -172,7 +200,8 @@ public class MapTransition : MonoBehaviour
 
     private async UniTask UpdateMapPositionsAsync(int centerIndex)
     {
-        startMapButton.interactable = false;
+        if (startMapButton != null)
+            startMapButton.interactable = false;
 
         Sequence sequence = DOTween.Sequence();
 
@@ -195,7 +224,8 @@ public class MapTransition : MonoBehaviour
 
         await sequence.AsyncWaitForCompletion();
 
-        startMapButton.interactable = true;
+        if(startMapButton != null)
+            startMapButton.interactable = true;
     }
 
     private Vector3 CalculateTargetPosition(int mapIndex, int centerIndex)

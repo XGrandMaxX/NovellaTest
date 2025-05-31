@@ -1522,7 +1522,7 @@ MonoBehaviour:
     Button: {fileID: 7638797882566415415}
   playerNameInputUI: {fileID: 4560542256061171788}
   StartNameText: {fileID: 1533219986}
-  LoadedScene: GameScene
+  LoadedScene: Map1
 --- !u!224 &123444427729894959
 RectTransform:
   m_ObjectHideFlags: 0

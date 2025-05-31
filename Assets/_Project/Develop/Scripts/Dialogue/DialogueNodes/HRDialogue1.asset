@@ -1,0 +1,83 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc3f9ede2d3455f4a8c0f4174942667b, type: 3}
+  m_Name: HRDialogue1
+  m_EditorClassIdentifier: 
+  nodes:
+  - GUID: 1
+    NodeType: 0
+    SpeakerName: User
+    SpeakerSide: 0
+    DialogueStartDelay: 1
+    Text: Hire me, I'm dying!!!
+    TextAlignment: 257
+    TextPrintSound: {fileID: 8300000, guid: 7f0b072af7b5d804fab1bedda46a75f0, type: 3}
+    AutoChangeDialogue: 0
+    AutoChangeDelay: 2
+    revealMode: 1
+    revealSpeed: 0.05
+    SceneEventKeysOnStart:
+    - Key: ClearSpeakerNames
+      DelayBeforeEvent: 0
+      DelayAfterEvent: 0
+    - Key: OpenQuestPanel
+      DelayBeforeEvent: 2
+      DelayAfterEvent: 0
+    SceneEventKeysOnEnd: []
+    Choices: []
+    Quests:
+    - {fileID: 11400000, guid: 949c10a2dc9faf7488335a4817ec393a, type: 2}
+    NextNodeGuid: 2
+  - GUID: 2
+    NodeType: 0
+    SpeakerName: HR
+    SpeakerSide: 1
+    DialogueStartDelay: 0
+    Text: "No rush, {User}, you need to pass the technical interview \u2014 go to
+      the TeamLead."
+    TextAlignment: 257
+    TextPrintSound: {fileID: 8300000, guid: 7f0b072af7b5d804fab1bedda46a75f0, type: 3}
+    AutoChangeDialogue: 0
+    AutoChangeDelay: 0
+    revealMode: 1
+    revealSpeed: 0.06
+    SceneEventKeysOnStart:
+    - Key: ClearSpeakerNames
+      DelayBeforeEvent: 0
+      DelayAfterEvent: 0
+    SceneEventKeysOnEnd: []
+    Choices: []
+    Quests: []
+    NextNodeGuid: 3
+  - GUID: 3
+    NodeType: 0
+    SpeakerName: User
+    SpeakerSide: 0
+    DialogueStartDelay: 0
+    Text: Alright
+    TextAlignment: 257
+    TextPrintSound: {fileID: 8300000, guid: 7f0b072af7b5d804fab1bedda46a75f0, type: 3}
+    AutoChangeDialogue: 1
+    AutoChangeDelay: 1
+    revealMode: 1
+    revealSpeed: 0.06
+    SceneEventKeysOnStart:
+    - Key: ClearSpeakerNames
+      DelayBeforeEvent: 0
+      DelayAfterEvent: 0
+    SceneEventKeysOnEnd:
+    - Key: MapAutoTransitionNext
+      DelayBeforeEvent: 0
+      DelayAfterEvent: 0
+    Choices: []
+    Quests: []
+    NextNodeGuid: 
